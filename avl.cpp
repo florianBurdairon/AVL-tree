@@ -24,6 +24,7 @@ Retrouvons-nous bien les complexité logarithmiques promises ?
 #include <string>
 #include <sstream>
 #include <cstdint>
+#include <vector>
 
 
 using namespace std;
@@ -263,7 +264,7 @@ node* deleteNode(node *root, uint64_t data){
             root = root->right;
         }
         calcHeightRecursive(root);
-        cout << "Deleted node " << oldRoot->data << " for new root : " << root->data << endl;
+        //cout << "Deleted node " << oldRoot->data << " for new root : " << root->data << endl;
         delete(oldRoot);
     } else {
         if (data > root->data && hasRight(root)){
@@ -271,7 +272,7 @@ node* deleteNode(node *root, uint64_t data){
         } else if (data <= root->data && hasLeft(root)){
             root->left = deleteNode(root->left, data);
         } else {
-            cout << "Value not found" << endl;
+            //cout << "Value not found" << endl;
         }
         root->height = calcHeight(root);
     }
@@ -345,94 +346,129 @@ void displayTree(node* tree, int depth = 0, bool isRight = true) {
     }
 }
 
-node* genTreeFromValuesFile(string filename){
+vector<uint64_t> loadValues(string filename) {
+	vector<uint64_t> values;
     ifstream f1(filename);
     string line;
     getline(f1, line);
     uint64_t value;
     istringstream iss(line);
     iss >> value;
-    node* root = createNode(value);
+	values.push_back(value);
 
     while (getline(f1, line))
     {
         istringstream iss(line);
         iss >> value;
-        root = insert(root, value);
+		values.push_back(value);
     }
+    values.shrink_to_fit();
+    return values;
+}
+
+node* genTreeFromValuesFile(vector<uint64_t> &values) {
+    int n = values.size();
+    int timeStart = clock();
+
+    cout << "Begin insert bench for " << n << " values\n";
+
+    node* root = createNode(values.at(0));
+
+    for (int i = 1; i < n; i++)
+    {
+        root = insert(root, values.at(i));
+    }
+
+    int timeEnd = clock();
+    float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
+
+    cout << "End of insert bench\n\tTotal time : " << duration << " s\n\n";
 
     return root;
 }
 
-void searchValuesFromSearchFile(node *root, string filename) {
-    ifstream f1(filename);
-    string line;
+void searchValuesFromSearchFile(node* root, vector<uint64_t> &values) {
+    int n = values.size();
+    int timeStart = clock();
+    
+    cout << "Begin search bench for " << n << " values\n";
 
-    while (getline(f1, line))
+    for (int i = 0; i < n; i++)
     {
-        uint64_t value;
-        istringstream iss(line);
-        iss >> value;
-        if (search(root, value)) {
-            cout << "Value " << value << " found!" << endl;
-        } else {
-            cout << "Value " << value << " not found..." << endl; 
-        }
+        search(root, values.at(i));
     }
+
+	int timeEnd = clock();
+    float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
+
+    cout << "End of search bench\n\tTotal time : " << duration << " s\n\n";
 }
 
-node* deleteValueFromDeleteFile(node* root, string filename) {
-    ifstream f1(filename);
-    string line;
+node* deleteValueFromDeleteFile(node* root, vector<uint64_t> &values) {
+    int n = values.size();
+    int timeStart = clock();
 
-    while (getline(f1, line))
+    cout << "Begin delete bench for " << n << " values\n";
+
+    for (int i = 0; i < n; i++)
     {
-        uint64_t value;
-        istringstream iss(line);
-        iss >> value;
-        root = deleteNode(root, value);
+        root = deleteNode(root, values.at(i));
     }
-    
+
+    int timeEnd = clock();
+    float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
+
+    cout << "End of delete bench\n\tTotal time : " << duration << " s\n\n";
+
     return root;
 }
 
 
 int main(){
-    /*node * root = createNode(15);
-    // remplir l'arbre
+
+    //Part 2 - Tests
+    // Insert values
+    /*node * root = createNode(15); // Create the AVL tree.
     root = insert(root, 12);
     root = insert(root, 20);
     root = insert(root, 10);
     root = insert(root, 8);
 
-    //Supprimer des valeurs
+    // Delete values
     root = deleteNode(root, 12);
     root = deleteNode(root, 20);
 
-	// Rechercher des valeurs
+	// Search values
     root = searchAndInsert(root, 23);
     root = searchAndInsert(root, 23);*/
 
-    //Benchmark
+    //Part 3/4 - Benchmark
+    // Load values from files
+	int timeStart = clock();
+	cout << "Loading values from files..." << endl;
+	vector<uint64_t> values = loadValues("Values_25.txt");
+	vector<uint64_t> searchValues = loadValues("Search_25.txt");
+	vector<uint64_t> deleteValues = loadValues("Delete_25.txt");
+	int timeEnd = clock();
+	float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
+    cout << "Values loaded in " << duration << " s." << endl << endl;
+
     //Insert values
-    node* tree = genTreeFromValuesFile("Values_20.txt");
+    node* tree = genTreeFromValuesFile(values);
 
 	//Search values
-    searchValuesFromSearchFile(tree, "Search_20.txt");
-
-	//Display tree
-    //displayTree(tree);
+    searchValuesFromSearchFile(tree, searchValues);
 
 	//Delete values
-    tree = deleteValueFromDeleteFile(tree, "Delete_20.txt");
+    tree = deleteValueFromDeleteFile(tree, deleteValues);
     
 	//Search values after delete
-    searchValuesFromSearchFile(tree, "Search_20.txt");
+    searchValuesFromSearchFile(tree, searchValues);
 
-	//Display tree
-    //displayTree(tree);
+    int timeEnd = clock();
+    float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
+	cout << "End benchmark.\n\tTotal time : " << duration << " s\n\n";
 
-    // faire des tests
     return 0;
   
 }
