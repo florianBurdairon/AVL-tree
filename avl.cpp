@@ -25,6 +25,9 @@ Retrouvons-nous bien les complexité logarithmiques promises ?
 #include <sstream>
 #include <cstdint>
 #include <vector>
+#include <chrono>
+#include <ctime>
+#include <ratio>
 
 
 using namespace std;
@@ -368,9 +371,10 @@ vector<uint64_t> loadValues(string filename) {
 
 node* genTreeFromValuesFile(vector<uint64_t> &values) {
     int n = values.size();
-    int timeStart = clock();
 
     cout << "Begin insert bench for " << n << " values\n";
+
+    chrono::high_resolution_clock::time_point timeStart = chrono::high_resolution_clock::now();
 
     node* root = createNode(values.at(0));
 
@@ -379,60 +383,60 @@ node* genTreeFromValuesFile(vector<uint64_t> &values) {
         root = insert(root, values.at(i));
     }
 
-    int timeEnd = clock();
-    float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
+    chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
+    chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
 
-    cout << "End of insert bench\n\tTotal time : " << duration << " s\n\n";
+    cout << "End of insert bench\n\tTotal time : " << duration.count() << "ms\n\n";
 
     return root;
 }
 
 void searchValuesFromSearchFile(node* root, vector<uint64_t> &values) {
     int n = values.size();
-    int timeStart = clock();
-    
     cout << "Begin search bench for " << n << " values\n";
-
+    chrono::high_resolution_clock::time_point timeStart = chrono::high_resolution_clock::now();
+    
     for (int i = 0; i < n; i++)
     {
         search(root, values.at(i));
     }
 
-	int timeEnd = clock();
-    float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
+	chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
+    chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
 
-    cout << "End of search bench\n\tTotal time : " << duration << " s\n\n";
+    cout << "End of search bench\n\tTotal time : " << duration.count() << "ms\n\n";
 }
 
 node* deleteValueFromDeleteFile(node* root, vector<uint64_t> &values) {
     int n = values.size();
-    int timeStart = clock();
-
     cout << "Begin delete bench for " << n << " values\n";
+    chrono::high_resolution_clock::time_point timeStart = chrono::high_resolution_clock::now();
+
 
     for (int i = 0; i < n; i++)
     {
         root = deleteNode(root, values.at(i));
     }
 
-    int timeEnd = clock();
-    float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
+    chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
+    chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
 
-    cout << "End of delete bench\n\tTotal time : " << duration << " s\n\n";
+    cout << "End of delete bench\n\tTotal time : " << duration.count() << "ms\n\n";
 
     return root;
 }
 
 
 int main(){
-
+    
+    /*
     //Part 2 - Tests
     // Insert values
-    /*node * root = createNode(15); // Create the AVL tree.
-    root = insert(root, 12);
-    root = insert(root, 20);
-    root = insert(root, 10);
-    root = insert(root, 8);
+    node * root = createNode(5); // Create the AVL tree.
+    root = insert(root, 4);
+    root = insert(root, 3);
+    root = insert(root, 2);
+    root = insert(root, 1);
 
     // Delete values
     root = deleteNode(root, 12);
@@ -440,18 +444,19 @@ int main(){
 
 	// Search values
     root = searchAndInsert(root, 23);
-    root = searchAndInsert(root, 23);*/
+    root = searchAndInsert(root, 23);
+    */
 
     //Part 3/4 - Benchmark
     // Load values from files
-	int timeStart = clock();
+    chrono::high_resolution_clock::time_point timeStart = chrono::high_resolution_clock::now();
 	cout << "Loading values from files..." << endl;
 	vector<uint64_t> values = loadValues("Values_25.txt");
 	vector<uint64_t> searchValues = loadValues("Search_25.txt");
 	vector<uint64_t> deleteValues = loadValues("Delete_25.txt");
-	int timeEnd = clock();
-	float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
-    cout << "Values loaded in " << duration << " s." << endl << endl;
+	chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
+    chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
+    cout << "Values loaded in " << duration.count() << "ms." << endl << endl;
 
     //Insert values
     node* tree = genTreeFromValuesFile(values);
@@ -465,10 +470,9 @@ int main(){
 	//Search values after delete
     searchValuesFromSearchFile(tree, searchValues);
 
-    int timeEnd = clock();
-    float duration = (float)(timeEnd - timeStart) / CLOCKS_PER_SEC;
-	cout << "End benchmark.\n\tTotal time : " << duration << " s\n\n";
+    timeEnd = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
+	cout << "End benchmark.\n\tTotal time : " << duration.count() << "ms\n\n";
 
     return 0;
-  
 }
