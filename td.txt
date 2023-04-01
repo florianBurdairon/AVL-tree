@@ -1,0 +1,56 @@
+RR
+
+tmp = root
+root = tmp.right
+tmp.right = root.left
+root.left = tmp
+
+
+LL
+
+tmp = root
+root = tmp.left
+tmp.left = root.right
+root.right = tmp
+
+LR
+
+tmp = root
+root = tmp.right.left
+tmp.right.left = root.right
+root.right = tmp.right
+tmp.right = root.left
+root.left = tmp
+
+RL
+
+tmp = root
+root = tmp.left.right
+tmp.left.right = root.left
+root.left = tmp.left
+tmp.left = root.right
+root.right = tmp
+
+insertion(root, node)
+	if (node.value < root.value)
+		if(root.left != null)
+			insertion(root.left, node)
+			root.depth = max(root.left.depth, root.right.depth) + 1
+		else
+			root.left = node
+			root.depth = 2
+			root.stability = root.left.depth
+			if(root.right != null)
+				root.stability -= root.right.depth
+	else if(node.value > root.value)
+		if(root.right != null)
+			insertion(root.right, node)
+		else
+			root.right = node
+	else
+		if(root.left == null)
+			root.left = node
+		else if(root.right == null)
+			root.right = node
+		else
+			insertion(root.left, node)
