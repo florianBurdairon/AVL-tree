@@ -349,3 +349,18 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 /.vscode
+/Values_5.txt
+/Values_25.txt
+/Values_20.txt
+/Values_15.txt
+/Values_10.txt
+/Search_5.txt
+/Search_25.txt
+/Search_20.txt
+/Search_15.txt
+/Search_10.txt
+/Delete_5.txt
+/Delete_25.txt
+/Delete_20.txt
+/Delete_15.txt
+/Delete_10.txt
