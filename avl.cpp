@@ -386,7 +386,7 @@ node* genTreeFromValuesFile(vector<uint64_t> &values) {
     chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
     chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
 
-    cout << "End of insert bench\n\tTotal time : " << duration.count() << "µs\n\n";
+    cout << "End of insert bench\n\tTotal time : " << duration.count() << " microseconds\n\n";
 
     return root;
 }
@@ -404,7 +404,7 @@ void searchValuesFromSearchFile(node* root, vector<uint64_t> &values) {
 	chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
     chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
 
-    cout << "End of search bench\n\tTotal time : " << duration.count() << "µs\n\n";
+    cout << "End of search bench\n\tTotal time : " << duration.count() << " microseconds\n\n";
 }
 
 node* deleteValueFromDeleteFile(node* root, vector<uint64_t> &values) {
@@ -421,9 +421,36 @@ node* deleteValueFromDeleteFile(node* root, vector<uint64_t> &values) {
     chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
     chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
 
-    cout << "End of delete bench\n\tTotal time : " << duration.count() << "µs\n\n";
+    cout << "End of delete bench\n\tTotal time : " << duration.count() << " microseconds\n\n";
 
     return root;
+}
+
+void TestValues(string number) {
+    chrono::high_resolution_clock::time_point timeStart = chrono::high_resolution_clock::now();
+    cout << "Loading values from files..." << endl;
+    vector<uint64_t> values = loadValues("Values_" + number + ".txt");
+    vector<uint64_t> searchValues = loadValues("Search_" + number + ".txt");
+    vector<uint64_t> deleteValues = loadValues("Delete_" + number + ".txt");
+    chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
+    chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
+    cout << "Values loaded in " << duration.count() << " microseconds." << endl << endl;
+
+    //Insert values
+    node* tree = genTreeFromValuesFile(values);
+
+    //Search values
+    searchValuesFromSearchFile(tree, searchValues);
+
+    //Delete values
+    tree = deleteValueFromDeleteFile(tree, deleteValues);
+
+    //Search values after delete
+    searchValuesFromSearchFile(tree, searchValues);
+
+    timeEnd = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
+    cout << "End benchmark.\n\tTotal time : " << duration.count() << " microseconds\n\n";
 }
 
 
@@ -447,32 +474,13 @@ int main(){
     root = searchAndInsert(root, 23);
     */
 
-    //Part 3/4 - Benchmark
+    //Part 3/4 + 4/4 - Benchmark
     // Load values from files
-    chrono::high_resolution_clock::time_point timeStart = chrono::high_resolution_clock::now();
-	cout << "Loading values from files..." << endl;
-	vector<uint64_t> values = loadValues("Values_25.txt");
-	vector<uint64_t> searchValues = loadValues("Search_25.txt");
-	vector<uint64_t> deleteValues = loadValues("Delete_25.txt");
-	chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
-    chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
-    cout << "Values loaded in " << duration.count() << "µs." << endl << endl;
-
-    //Insert values
-    node* tree = genTreeFromValuesFile(values);
-
-	//Search values
-    searchValuesFromSearchFile(tree, searchValues);
-
-	//Delete values
-    tree = deleteValueFromDeleteFile(tree, deleteValues);
-    
-	//Search values after delete
-    searchValuesFromSearchFile(tree, searchValues);
-
-    timeEnd = chrono::high_resolution_clock::now();
-    duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
-	cout << "End benchmark.\n\tTotal time : " << duration.count() << "µs\n\n";
+    TestValues("5");
+    TestValues("10");
+    TestValues("15");
+    TestValues("20");
+    TestValues("25");
 
     return 0;
 }
