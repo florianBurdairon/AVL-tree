@@ -386,7 +386,7 @@ node* genTreeFromValuesFile(vector<uint64_t> &values) {
     chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
     chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
 
-    cout << "End of insert bench\n\tTotal time : " << duration.count() << "ms\n\n";
+    cout << "End of insert bench\n\tTotal time : " << duration.count() << "µs\n\n";
 
     return root;
 }
@@ -404,7 +404,7 @@ void searchValuesFromSearchFile(node* root, vector<uint64_t> &values) {
 	chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
     chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
 
-    cout << "End of search bench\n\tTotal time : " << duration.count() << "ms\n\n";
+    cout << "End of search bench\n\tTotal time : " << duration.count() << "µs\n\n";
 }
 
 node* deleteValueFromDeleteFile(node* root, vector<uint64_t> &values) {
@@ -421,7 +421,7 @@ node* deleteValueFromDeleteFile(node* root, vector<uint64_t> &values) {
     chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
     chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
 
-    cout << "End of delete bench\n\tTotal time : " << duration.count() << "ms\n\n";
+    cout << "End of delete bench\n\tTotal time : " << duration.count() << "µs\n\n";
 
     return root;
 }
@@ -456,7 +456,7 @@ int main(){
 	vector<uint64_t> deleteValues = loadValues("Delete_25.txt");
 	chrono::high_resolution_clock::time_point timeEnd = chrono::high_resolution_clock::now();
     chrono::microseconds duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
-    cout << "Values loaded in " << duration.count() << "ms." << endl << endl;
+    cout << "Values loaded in " << duration.count() << "µs." << endl << endl;
 
     //Insert values
     node* tree = genTreeFromValuesFile(values);
@@ -472,7 +472,7 @@ int main(){
 
     timeEnd = chrono::high_resolution_clock::now();
     duration = chrono::duration_cast<chrono::microseconds>(timeEnd - timeStart);
-	cout << "End benchmark.\n\tTotal time : " << duration.count() << "ms\n\n";
+	cout << "End benchmark.\n\tTotal time : " << duration.count() << "µs\n\n";
 
     return 0;
 }
