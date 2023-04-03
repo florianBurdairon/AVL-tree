@@ -474,7 +474,7 @@ int main(){
     root = searchAndInsert(root, 23);
     */
 
-    //Part 3/4 + 4/4 - Benchmark
+    //Part 3 & 4 - Benchmark
     // Load values from files
     TestValues("5");
     TestValues("10");
